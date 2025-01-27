@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 // Define the FlashProduct schema
 const flashProductSchema = new mongoose.Schema({
-  img: {
+  photo: {
     type: String,
-    required: true, // img is required
+   
   },
   name: {
     type: String,

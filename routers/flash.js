@@ -1,14 +1,26 @@
 import express from 'express';
 import flashProduct from '../modules/flashproduct.js'
+import multer from 'multer';
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb)=>{
+    cb(null, 'uploads/')
+  },
+  filename: (req, file, cb )=>{
+const suffix = Date.now()
+cb(null, suffix + '-' + file.originalname)
+  }
+})
+
+const upload = multer({storage})
 
 const router = express.Router();
 
-router.post('/flash-product', async (req, res)=>{
+router.post('/flashproduct', upload.single('photo'), async (req, res)=>{
     
-const {img, name, price} = req.body
+const { name, price} = req.body
 
-let flash = new flashProduct({img, name, price})
+let flash = new flashProduct({ name, price})
 
 flash = await flash.save()
 res.status(201).json({ message: 'Flash product created', product: flash });
@@ -16,7 +28,7 @@ res.status(201).json({ message: 'Flash product created', product: flash });
 })
 
 
-router.get('/flash-product', async (req, res) => {
+router.get('/flashproduct', async (req, res) => {
     try {
       const products = await flashProduct.find(); // Retrieve all products from MongoDB
       res.status(200).json(products); // Send products as the response
